@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscar Posts</title>
+    <style>
+        #results {
+            list-style-type: none;  /* Opcional: quita los puntos de la lista */
+            padding: 0;  /* Opcional: elimina el relleno */
+            margin: 10px 0;  /* Opcional: margen para separar la lista */
+        }
+
+        #results li {
+            margin: 5px 0;  /* Espacio entre los elementos */
+            padding: 10px;  /* Relleno dentro de cada elemento */
+            border: 1px solid #ccc;  /* Borde para visualizar los elementos */
+            border-radius: 4px;  /* Bordes redondeados */
+            background-color: #f9f9f9;  /* Fondo ligero */
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Buscar Posts por Título</h1>
+
+    <!-- Formulario de búsqueda -->
+    <form id="searchForm">
+        <input type="text" id="title" name="title" placeholder="Escribe el título" required>
+        <button type="submit">Buscar</button>
+    </form>
+
+    <!-- Resultados de búsqueda -->
+    <h2>Resultados:</h2>
+    <ul id="results"></ul>
+
+    <script>
+        document.getElementById("searchForm").addEventListener("submit", async function (event) {
+            event.preventDefault();  // Prevenir la acción predeterminada del formulario
+
+            // Obtener el título de la entrada del formulario
+            const title = document.getElementById("title").value;
+
+            // Hacer la solicitud a la API de FastAPI (ajustar la URL según corresponda)
+            const response = await fetch(`https://curly-memory-pj7ppq9j954gc97g9-8000.app.github.dev/posts/search?title=hola`);
+
+            if (response.ok) {
+                const posts = await response.json();  // Obtener los posts desde la respuesta de la API
+
+                // Verificar si la respuesta contiene datos
+                console.log(posts);  // Verifica los datos recibidos en la consola
+
+                // Obtener el contenedor de resultados
+                const resultsList = document.getElementById("results");
+                resultsList.innerHTML = "";  // Limpiar los resultados anteriores
+
+                // Verificar si hay posts
+                if (posts.length > 0) {
+                    posts.forEach(post => {
+                        // Crear un elemento <li> para cada post y agregarlo a la lista
+                        const li = document.createElement("li");
+                        li.textContent = `Título: ${post.title} - Contenido: ${post.content}`;
+                        resultsList.appendChild(li);
+                    });
+                } else {
+                    // Si no hay resultados
+                    resultsList.innerHTML = "<li>No se encontraron resultados.</li>";
+                }
+            } else {
+                // Manejo de error si la API no responde correctamente
+                alert("Hubo un error al buscar los posts.");
+            }
+        });
+    </script>
+
+</body>
+
+</html>
